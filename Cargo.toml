@@ -2,5 +2,14 @@
 name = "peregrine"
 version = "0.1.0"
 authors = ["Alexander Stocko <as@coder.gg>"]
+license = "MIT/Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/astocko/peregrine"
+homepage = "https://github.com/astocko/peregrine"
+description = """
+Runtime x86-64 assembler for the Rust programming language.
+"""
+keywords = ["assembler", "jit", "x86", "x86-64"]
+
 
 [dependencies]
