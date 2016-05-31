@@ -1,0 +1,6 @@
+[package]
+name = "peregrine"
+version = "0.1.0"
+authors = ["Alexander Stocko <as@coder.gg>"]
+
+[dependencies]
