@@ -1,3 +1,7 @@
+# UNDER DEVELOPMENT
+
+I am planning to release the first version on June 17, 2016.
+
 # peregrine
 
 Runtime x86-64 assembler for the Rust programming language.
