@@ -4,3 +4,5 @@ version = "0.1.0"
 authors = ["Alexander Stocko <as@coder.gg>"]
 
 [dependencies]
+serde = "*"
+serde_json = "*"
