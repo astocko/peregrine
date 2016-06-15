@@ -214,6 +214,7 @@ impl Operand {
         }
     }
 }
+
 #[allow(non_camel_case_types)]
 #[derive(Debug)]
 pub enum OperandId {
@@ -461,7 +462,7 @@ impl FromStr for ZeroRef {
 }
 
 
-
+#[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct REX {
     pub mandatory: bool,
@@ -501,6 +502,7 @@ impl FromStr for VEXType {
     }
 }
 
+#[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct VEX {
     pub id: VEXType,
@@ -576,6 +578,7 @@ impl FromStr for NoneRef {
     }
 }
 
+#[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct EVEX {
     pub mm: u8,
@@ -664,7 +667,7 @@ impl FromStr for IntOrRef {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match u8::from_str(s) {
             Ok(res) => Ok(IntOrRef::Extension(res)),
-            Err(e) => {
+            Err(_) => {
                 match s {
                     "#0" => Ok(IntOrRef::Ref(0)),
                     "#1" => Ok(IntOrRef::Ref(1)),
