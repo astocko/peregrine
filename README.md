@@ -1,6 +1,14 @@
 # UNDER DEVELOPMENT
 
-I am planning to release the first version on June 17, 2016.
+DO NOT USE YET.
+
+I am planning to release the first version on June 20, 2016. It will be pre-alpha and function as a proof of concept.
+Thereafter the goals are:
+
+* Get the base feature set "working"
+* Refactor and optimize the API
+* Focus on testing
+* Make it fast
 
 # peregrine
 
