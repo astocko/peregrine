@@ -54,6 +54,21 @@ pub fn load_instruction_set() -> Vec<Instruction> {
     }
 
     instruction_set
+}
 
 
+
+
+fn filter_instruction_forms(forms: &mut Vec<InstructionForm>) -> Vec<&InstructionForm> {
+    let mut new_forms = Vec::new();
+
+    for form in forms.iter() {
+        if !form.operands
+            .iter()
+            .any(|x| x.id == OperandId::moffs32 || x.id == OperandId::moffs64) {
+            new_forms.push(form);
+        }
+    }
+
+    new_forms
 }
