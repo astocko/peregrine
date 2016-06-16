@@ -22,6 +22,11 @@ Licensed under either of
 at your option.
 
 
+## Credit
+
+Various concepts and functionality in peregrine have been derived from other open source projects. Special mentions
+go to [PeachPy](https://github.com/Maratyszcza/PeachPy) and [AsmJit](https://github.com/kobalicek/asmjit). 
+
 Please see [LICENSE](LICENSE) for additional information. 
 
 ### Contribution
