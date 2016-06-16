@@ -4,13 +4,13 @@ mod macros;
 mod types;
 mod group_parser;
 mod instruction_parser;
+mod loader;
 
 #[cfg(test)]
 mod tests {
     use super::*;
     #[test]
     fn it_works() {
-        super::instruction_parser::load_instructions();
-        super::group_parser::load_instruction_groups();
+        super::loader::load_instruction_set();
     }
 }

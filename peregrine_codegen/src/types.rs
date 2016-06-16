@@ -28,7 +28,7 @@ impl Error for ParseInsError {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Instruction {
     pub name: String,
     pub summary: String,
@@ -45,7 +45,7 @@ impl Instruction {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct InstructionForm {
     pub mmx_mode: MMXMode,
     pub xmm_mode: XMMMode,
@@ -70,7 +70,7 @@ impl InstructionForm {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Encoding {
     pub prefix: Option<Prefix>,
     pub rex: Option<REX>,
@@ -102,7 +102,7 @@ impl Encoding {
 }
 
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum MMXMode {
     FPU,
     MMX,
@@ -120,7 +120,7 @@ impl FromStr for MMXMode {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum XMMMode {
     SSE,
     AVX,
@@ -139,7 +139,7 @@ impl FromStr for XMMMode {
 }
 
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ImplicitOperand {
     pub id: ImplicitRegister,
     pub input: bool,
@@ -156,7 +156,7 @@ impl ImplicitOperand {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ImplicitRegister {
     AX,
     AL,
@@ -196,7 +196,7 @@ impl FromStr for ImplicitRegister {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Operand {
     pub id: OperandId,
     pub input: bool,
@@ -216,7 +216,7 @@ impl Operand {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum OperandId {
     _1_,
     _3_,
@@ -376,7 +376,7 @@ impl FromStr for OperandId {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Prefix {
     pub mandatory: bool,
     pub byte: u8,
@@ -391,7 +391,7 @@ impl Prefix {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Bit {
     Zero,
     One,
@@ -409,7 +409,7 @@ impl FromStr for Bit {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum BitRef {
     Zero,
     One,
@@ -435,11 +435,13 @@ impl FromStr for BitRef {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ZeroRef {
     Zero,
     Ref(u8),
     NONE,
+    // hacked add on
+    EVEX_b_ONE,
 }
 
 impl FromStr for ZeroRef {
@@ -463,7 +465,7 @@ impl FromStr for ZeroRef {
 
 
 #[allow(non_snake_case)]
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct REX {
     pub mandatory: bool,
     pub W: Bit,
@@ -484,7 +486,7 @@ impl REX {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum VEXType {
     VEX,
     XOP,
@@ -503,7 +505,7 @@ impl FromStr for VEXType {
 }
 
 #[allow(non_snake_case)]
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct VEX {
     pub id: VEXType,
     pub mmmmm: u8,
@@ -532,7 +534,7 @@ impl VEX {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum LLBitRef {
     Zero,
     One,
@@ -555,7 +557,7 @@ impl FromStr for LLBitRef {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum NoneRef {
     NONE,
     Ref(u8),
@@ -579,7 +581,7 @@ impl FromStr for NoneRef {
 }
 
 #[allow(non_snake_case)]
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EVEX {
     pub mm: u8,
     pub pp: u8,
@@ -616,7 +618,7 @@ impl EVEX {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Opcode {
     pub byte: u8,
     pub addend: NoneRef,
@@ -631,7 +633,7 @@ impl Opcode {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum AddressMode {
     Two,
     Ref(u8),
@@ -655,7 +657,7 @@ impl FromStr for AddressMode {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum IntOrRef {
     Extension(u8),
     Ref(u8),
@@ -684,7 +686,7 @@ impl FromStr for IntOrRef {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ModRM {
     pub mode: AddressMode,
     pub rm: NoneRef,
@@ -701,7 +703,7 @@ impl ModRM {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct RegisterByte {
     pub register: NoneRef,
     pub payload: NoneRef,
@@ -716,7 +718,7 @@ impl RegisterByte {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Immediate {
     pub size: u8,
     pub value: IntOrRef,
@@ -732,7 +734,7 @@ impl Immediate {
 }
 
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct CodeOffset {
     pub size: u8,
     pub value: NoneRef,
@@ -747,7 +749,7 @@ impl CodeOffset {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DataOffset {
     pub size: u8,
     pub value: NoneRef,
@@ -762,7 +764,7 @@ impl DataOffset {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ISA {
     CPUID = 1,
     RDTSC = 5,
