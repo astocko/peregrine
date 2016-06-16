@@ -10,6 +10,8 @@ Thereafter the goals are:
 * Focus on testing
 * Make it fast
 
+If you'd like to chat about any issues, please join `#peregrine` on Mozilla IRC.
+
 # peregrine
 
 Runtime x86-64 assembler for the Rust programming language.
