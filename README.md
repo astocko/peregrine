@@ -21,6 +21,9 @@ Licensed under either of
  * MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
 at your option.
 
+
+Please see [LICENSE](LICENSE) for additional information. 
+
 ### Contribution
 
 Unless you explicitly state otherwise, any contribution intentionally submitted
