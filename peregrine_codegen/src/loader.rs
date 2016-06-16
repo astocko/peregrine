@@ -56,9 +56,6 @@ pub fn load_instruction_set() -> Vec<Instruction> {
     instruction_set
 }
 
-
-
-
 fn filter_instruction_forms(forms: &mut Vec<InstructionForm>) -> Vec<&InstructionForm> {
     let mut new_forms = Vec::new();
 
@@ -71,4 +68,15 @@ fn filter_instruction_forms(forms: &mut Vec<InstructionForm>) -> Vec<&Instructio
     }
 
     new_forms
+}
+
+fn is_avx512(form: &InstructionForm) -> bool {
+    let mut res = false;
+    if form.isas.len() > 0 {
+        let isa_code = (form.isas[0].clone() as u8);
+        if isa_code > 72 && isa_code < 80 {
+            res = true;
+        }
+    }
+    res
 }
