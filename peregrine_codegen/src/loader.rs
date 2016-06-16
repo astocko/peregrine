@@ -1,5 +1,4 @@
 use instruction_parser::load_instructions;
-use group_parser::load_instruction_groups;
 use types::*;
 
 pub fn load_instruction_set() -> Vec<Instruction> {
@@ -56,13 +55,13 @@ pub fn load_instruction_set() -> Vec<Instruction> {
     instruction_set
 }
 
-fn filter_instruction_forms(forms: &mut Vec<InstructionForm>) -> Vec<&InstructionForm> {
+pub fn filter_instruction_forms(forms: &Vec<InstructionForm>) -> Vec<&InstructionForm> {
     let mut new_forms = Vec::new();
 
     for form in forms.iter() {
-        if !form.operands
+        if !(form.operands
             .iter()
-            .any(|x| x.id == OperandId::moffs32 || x.id == OperandId::moffs64) {
+            .any(|x| x.id == OperandId::moffs32 || x.id == OperandId::moffs64)) {
             new_forms.push(form);
         }
     }
@@ -70,7 +69,7 @@ fn filter_instruction_forms(forms: &mut Vec<InstructionForm>) -> Vec<&Instructio
     new_forms
 }
 
-fn is_avx512(form: &InstructionForm) -> bool {
+pub fn is_avx512(form: &InstructionForm) -> bool {
     let mut res = false;
     if form.isas.len() > 0 {
         let isa_code = (form.isas[0].clone() as u8);
