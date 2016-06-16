@@ -66,8 +66,46 @@ pub fn filter_instruction_forms(forms: &Vec<InstructionForm>) -> Vec<&Instructio
         }
     }
 
+    new_forms.sort_by(|a, b| a.operands.len().cmp(&b.operands.len()));
+
     new_forms
 }
+
+// pub fn aggregate_instruction_forms(forms: &Vec<&InstructionForm>) {
+// fn find_single_op_diff(form: &InstructionForm, other: &InstructionForm) -> Option<usize> {
+// if form == other {
+// return None;
+// }
+
+// if form.operands.len() != other.operands.len() {
+// return None;
+// }
+
+// let mut idxs = Vec::new();
+
+// for idx in 0..form.operands.len() {
+// if form.operands[idx].id != other.operands[idx].id {
+// idxs.push(idx);
+// }
+// }
+
+// if idxs.len() == 1 {
+// Some(idxs[0])
+// } else {
+// None
+// }
+// }
+
+// for form in forms {
+// for other_form in forms {
+// match find_single_op_diff(form, other_form) {
+// _ => (),
+// }
+// }
+// }
+
+// find_single_op_diff(forms[0], forms[0]);
+// }
 
 pub fn is_avx512(form: &InstructionForm) -> bool {
     let mut res = false;

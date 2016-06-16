@@ -5,6 +5,7 @@ mod types;
 mod group_parser;
 mod instruction_parser;
 mod loader;
+mod code_writer;
 pub mod codegen;
 
 #[cfg(test)]
