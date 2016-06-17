@@ -129,10 +129,11 @@ fn is_hard_coded_op(id: &OperandId) -> bool {
 }
 
 macro_rules! write_encoding {
-    ($writer:ident, $($x:expr),*) => {
+    ($writer:ident, $($x:expr),*) => { {
     $(
-        $writer.codenl(format!("bytes.push(0x{:X});", $x).as_str())
+        $writer.codenl(format!("bytes.push(0x{:X});", $x).as_str());
     )*
+    }
     }
 }
 
@@ -182,18 +183,22 @@ fn write_trait_impl(writer: &mut CodeWriter, ins: &String, form: &InstructionFor
     }
 
     match &encoding.rex {
-        &Some(ref r) => write_encoding!(writer, 1),
-        &None => write_encoding!(writer, 0),
+        &Some(ref r) => (),
+        &None => (),
     }
 
     match &encoding.vex {
-        &Some(ref r) => write_encoding!(writer, 0x69),
-        &None => write_encoding!(writer, 0x20),
+        &Some(ref r) => (),
+        &None => (),
     }
 
     match &encoding.evex {
-        &Some(ref r) => write_encoding!(writer, 0x6A),
-        &None => write_encoding!(writer, 0xAA),
+        &Some(ref r) => (),
+        &None => (),
+    }
+
+    for opc in encoding.opcodes.iter() {
+        write_encoding!(writer, opc.byte);
     }
 
     writer.codenl("}");
