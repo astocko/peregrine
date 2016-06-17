@@ -398,6 +398,24 @@ pub enum Bit {
     NONE,
 }
 
+impl Bit {
+    pub fn as_str(&self) -> &str {
+        match self {
+            &Bit::Zero => "0b0",
+            &Bit::One => "0b1",
+            &Bit::NONE => "0b0",
+        }
+    }
+
+    pub fn as_u8(&self) -> u8 {
+        match self {
+            &Bit::Zero => 0,
+            &Bit::One => 1,
+            &Bit::NONE => 0,
+        }
+    }
+}
+
 impl FromStr for Bit {
     type Err = ParseInsError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -415,6 +433,26 @@ pub enum BitRef {
     One,
     Ref(u8),
     NONE,
+}
+
+impl BitRef {
+    pub fn as_str(&self) -> &str {
+        match self {
+            &BitRef::Ref(_) => "Ref",
+            &BitRef::Zero => "0b0",
+            &BitRef::One => "0b1",
+            &BitRef::NONE => "0b0",
+        }
+    }
+
+    pub fn as_u8(&self) -> u8 {
+        match self {
+            &BitRef::NONE => 0,
+            &BitRef::Zero => 0,
+            &BitRef::One => 1,
+            _ => panic!("Should never be here!"),
+        }
+    }
 }
 
 impl FromStr for BitRef {

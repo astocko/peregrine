@@ -1,4 +1,5 @@
 use std::collections::BTreeMap;
+use std::collections::VecDeque;
 
 use code_writer::CodeWriter;
 use group_parser::load_instruction_groups;
@@ -137,6 +138,95 @@ macro_rules! write_encoding {
     }
 }
 
+macro_rules! write_test {
+    ($writer:ident, $($x:expr),*) => { {
+    $(
+        $writer.codenl(format!("bytes.push({});", $x).as_str());
+    )*
+    }
+    }
+}
+
+
+fn encode_rex(writer: &mut CodeWriter, rex: &REX, operands: &Vec<Operand>) {
+
+    let mut parts = Vec::new();
+    let mut byte_seq = Vec::new();
+    let mut rex_args = Vec::new();
+
+    if rex.mandatory {
+        match rex.X {
+            BitRef::Ref(idx) => {
+                rex_args.push(rex.W.as_str().to_owned());
+                match rex.R {
+                    BitRef::Ref(idx) => {
+                        rex_args.push(format!("arg{}.hcode()", idx));
+                    }
+                    _ => rex_args.push(rex.R.as_str().to_owned()),
+                }
+                rex_args.push(format!("arg{}.address()", idx));
+                let rex = format!("rex({})", rex_args.join(", "));
+                parts.push(rex);
+            }
+            _ => {
+                let mut rex_byte: u8 = 0x40 | (rex.W.as_u8() << 3);
+                let mut rex_parts = VecDeque::new();
+
+                match rex.R {
+                    BitRef::Ref(idx) => {
+                        rex_parts.push_back(format!("arg{}.hcode() << 2", idx));
+                    }
+                    _ => rex_byte |= rex.R.as_u8() << 2,
+                }
+
+                match rex.B {
+                    BitRef::Ref(idx) => {
+                        rex_parts.push_back(format!("arg{}.hcode()", idx));
+                    }
+                    _ => rex_byte |= rex.B.as_u8(),
+                }
+
+                rex_byte |= rex.X.as_u8() << 1;
+                rex_parts.push_front(format!("0x{:X}", rex_byte));
+                // let rex_str = &rex_parts.join(" | ");
+                let rex_str = if rex_parts.len() > 1 {
+                    rex_parts.iter()
+                        .fold(String::new(), |acc, x| acc + " | " + x.as_str())
+                } else {
+                    rex_parts[0].clone()
+                };
+
+                byte_seq.push(rex_str);
+
+            }
+        }
+    } else {
+        match rex.R {
+            BitRef::Ref(idx) => rex_args.push(format!("arg{}.hcode()", idx)),
+            _ => rex_args.push(rex.R.as_str().to_owned()),
+        }
+
+        match rex.X {
+            BitRef::Ref(idx) => rex_args.push(format!("arg{}.address()", idx)),
+            _ => {
+                match rex.B {
+                    BitRef::Ref(idx) => rex_args.push(format!("arg{}", idx)),
+                    _ => (),
+                }
+            }
+        }
+
+    }
+
+    for b in byte_seq {
+        write_test!(writer, b);
+    }
+
+    for arg in rex_args {
+        write_test!(writer, arg);
+    }
+}
+
 fn write_trait_impl(writer: &mut CodeWriter, ins: &String, form: &InstructionForm) {
 
     let ref ops = form.operands;
@@ -183,7 +273,7 @@ fn write_trait_impl(writer: &mut CodeWriter, ins: &String, form: &InstructionFor
     }
 
     match &encoding.rex {
-        &Some(ref r) => (),
+        &Some(ref r) => encode_rex(writer, r, &ops),
         &None => (),
     }
 
