@@ -128,21 +128,81 @@ fn is_hard_coded_op(id: &OperandId) -> bool {
     }
 }
 
-pub fn write_form(writer: &mut CodeWriter, name: &String, form: &InstructionForm) {
-    match form.operands.len() {
-        0 => writer.code(format!("impl Ins0x for {} {{", name).as_str()),
-        1 => writer.code(format!("impl Ins1x<{:?}> for {} {{", form.operands[0].id, name).as_str()),
-        2 => {
-            writer.code(format!("impl Ins2x<{:?},{:?}> for {} {{",
-                                form.operands[0].id,
-                                form.operands[1].id,
-                                name)
-                .as_str())
+macro_rules! write_encoding {
+    ($writer:ident, $($x:expr),*) => {
+    $(
+        $writer.codenl(format!("bytes.push(0x{:X});", $x).as_str())
+    )*
+    }
+}
+
+fn write_trait_impl(writer: &mut CodeWriter, ins: &String, form: &InstructionForm) {
+
+    let ref ops = form.operands;
+
+    let opcount = ops.len();
+    let mut first = true;
+
+    writer.code(format!("impl Ins{}x<", opcount).as_str());
+    for i in 0..opcount {
+        if !first {
+            writer.code(", ");
         }
-        _ => panic!("Unrecognized operand count!"), 
+        first = false;
+        if (is_hard_coded_op(&ops[i].id)) {
+            writer.code("HardCodedOp");
+        } else {
+            writer.code(format!("{}", operand_to_struct(&ops[i].id)).as_str());
+        }
+    }
+    writer.codenl(format!("> for {} {{", ins).as_str());
+
+    // encoding function
+    first = true;
+
+    writer.code(format!("pub fn ins{}x(runtime: &JitRuntime, ", opcount).as_str());
+    for i in 0..opcount {
+        if !first {
+            writer.code(", ");
+        }
+        first = false;
+        if (is_hard_coded_op(&ops[i].id)) {
+            writer.code(format!("arg{}: HardCodedOp", i).as_str());
+        } else {
+            writer.code(format!("arg{}: {}", i, operand_to_struct(&ops[i].id)).as_str());
+        }
+    }
+    writer.codenl(") {");
+
+    let ref encoding = form.encodings[0];
+
+    match &encoding.prefix {
+        &Some(ref p) => write_encoding!(writer, p.byte),
+        &None => (),
     }
 
-    writer.code("}");
+    match &encoding.rex {
+        &Some(ref r) => write_encoding!(writer, 1),
+        &None => write_encoding!(writer, 0),
+    }
+
+    match &encoding.vex {
+        &Some(ref r) => write_encoding!(writer, 0x69),
+        &None => write_encoding!(writer, 0x20),
+    }
+
+    match &encoding.evex {
+        &Some(ref r) => write_encoding!(writer, 0x6A),
+        &None => write_encoding!(writer, 0xAA),
+    }
+
+    writer.codenl("}");
+    writer.codenl("}");
+
+}
+
+fn write_form(writer: &mut CodeWriter, name: &String, form: &InstructionForm) {
+    write_trait_impl(writer, name, &form);
 }
 
 pub fn generate() {
@@ -153,10 +213,6 @@ pub fn generate() {
 
 
     for ins in instructions {
-
-        if ins.name != "ADDSS" {
-            continue;
-        }
 
         let mut forms = filter_instruction_forms(&ins.forms);
 
@@ -169,16 +225,12 @@ pub fn generate() {
         writer.doc("Generated struct and trait implementations for:");
         writer.doc(ins.name.as_str());
         writer.doc(ins.summary.as_str());
-        writer.code(format!("pub struct {} {{}}", ins.name).as_str());
+        writer.codenl(format!("pub struct {} {{}}", ins.name).as_str());
 
         for form in &forms {
 
             write_form(&mut writer, &ins.name, form);
         }
-
-
-        break;
-
     }
 
 }

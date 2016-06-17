@@ -23,6 +23,10 @@ impl<'a> CodeWriter<'a> {
 
     pub fn code(&mut self, code: &str) {
         self.writer.write(code.as_bytes());
+    }
+
+    pub fn codenl(&mut self, code: &str) {
+        self.writer.write(code.as_bytes());
         self.writer.write(b"\n");
     }
 
